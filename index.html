@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Оформление заявки</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --accent: #F02137;
+      --accent-hover: #d01828;
+      --secondary: #0190CC;
+      --secondary-hover: #0175a8;
+      --text: #1a1a1a;
+      --text-light: #6b7280;
+      --bg: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+      --border: #e5e7eb;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    * { 
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      margin: 0; 
+      padding: 32px 16px;
+      background: var(--bg);
+      font-family: var(--font);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    h1 { 
+      text-align: center; 
+      font-size: 32px; 
+      margin-bottom: 32px;
+      font-weight: 700;
+      color: var(--text);
+      animation: fadeInDown 0.6s ease;
+    }
+    
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    label { 
+      display: block; 
+      margin-bottom: 12px; 
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--text);
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    select {
+      width: 100%; 
+      max-width: 400px;
+      margin: 0 auto 24px auto;
+      display: block; 
+      padding: 14px 16px;
+      font-size: 16px; 
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: white;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      animation: fadeInUp 0.5s ease;
+    }
+    
+    select:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(1, 144, 204, 0.1);
+    }
+    
+    .product {
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      background: white; 
+      padding: 16px 20px; 
+      margin-bottom: 12px;
+      border: 2px solid var(--border); 
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.4s ease;
+    }
+    
+    .product:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+      border-color: var(--secondary);
+    }
+    .product-name { 
+      flex: 1; 
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    
+    .qty-controls { 
+      display: flex; 
+      gap: 8px; 
+      align-items: center; 
+    }
+    
+    .qty-controls input {
+      width: 50px; 
+      height: 38px; 
+      text-align: center;
+      border: 2px solid var(--border); 
+      font-size: 16px; 
+      padding: 4px;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+    
+    .qty-controls input:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(1, 144, 204, 0.1);
+    }
+    
+    .qty-controls button {
+      width: 38px; 
+      height: 38px; 
+      border: none;
+      background: var(--secondary); 
+      color: white;
+      font-size: 20px; 
+      cursor: pointer; 
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      font-weight: 600;
+    }
+    
+    .qty-controls button:hover {
+      background: var(--secondary-hover);
+      transform: scale(1.05);
+    }
+    
+    .qty-controls button:active {
+      transform: scale(0.95);
+    }
+    
+    button.action {
+      background: var(--accent); 
+      color: white; 
+      border: none;
+      padding: 16px 24px; 
+      font-size: 17px; 
+      font-weight: 600;
+      width: 100%; 
+      max-width: 400px;
+      margin: 16px auto; 
+      display: block; 
+      cursor: pointer; 
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(240, 33, 55, 0.3);
+      animation: fadeInUp 0.5s ease;
+    }
+    
+    button.action:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(240, 33, 55, 0.4);
+    }
+    
+    button.action:active {
+      transform: translateY(0);
+    }
+    #result {
+      margin-top: 24px; 
+      background: white; 
+      padding: 24px;
+      border: 2px solid var(--border); 
+      font-size: 16px; 
+      line-height: 1.7;
+      white-space: pre-wrap;
+      border-radius: 12px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      animation: fadeInUp 0.5s ease;
+    }
+    
+    #pharmacist-info {
+      border-radius: 12px; 
+      max-width: 400px; 
+      margin: 0 auto 24px auto;
+      font-size: 16px; 
+      background: linear-gradient(135deg, #e0f7ff 0%, #f0f9ff 100%); 
+      padding: 16px 20px;
+      border: 2px solid var(--secondary); 
+      display: none;
+      animation: fadeInUp 0.4s ease;
+      box-shadow: 0 2px 8px rgba(1, 144, 204, 0.15);
+    }
+    
+    #pharmacist-info strong {
+      color: var(--secondary);
+    }
+    
+    .scroll-btn {
+      position: fixed; 
+      right: 24px; 
+      width: 52px; 
+      height: 52px; 
+      font-size: 22px;
+      border: none; 
+      border-radius: 50%; 
+      background: var(--accent);
+      color: white; 
+      cursor: pointer; 
+      box-shadow: 0 4px 12px rgba(240, 33, 55, 0.4);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    
+    #scrollTopBtn { bottom: 88px; }
+    #scrollBottomBtn { bottom: 24px; }
+    
+    .scroll-btn:hover { 
+      background: var(--accent-hover);
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(240, 33, 55, 0.5);
+    }
+    
+    .scroll-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+
+<h1>Каталог продукции</h1>
+
+<label for="pharmacist-select">Выберите имя провизора:</label>
+<select id="pharmacist-select">
+  <option disabled selected value="">— загрузка... —</option>
+</select>
+
+<div id="pharmacist-info"></div>
+
+<label for="group-select">Выберите группу товаров:</label>
+<select id="group-select">
+  <option disabled selected value="">— загрузка... —</option>
+</select>
+
+<div id="catalog"></div>
+
+<a id="order-block"></a>
+
+<button class="action" onclick="submitOrder()">📦 Сделать заказ</button>
+<button class="action" id="copyButton" onclick="copyToClipboard()" style="display:none;">📋 Скопировать заказ</button>
+<button class="action" id="closeButton" onclick="closeApp()" style="display:none;">❌ Закрыть</button>
+
+<div id="result"></div>
+
+<button id="scrollTopBtn" class="scroll-btn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });" title="Наверх">↑</button>
+<button id="scrollBottomBtn" class="scroll-btn" onclick="document.getElementById('order-block').scrollIntoView({ behavior: 'smooth' });" title="Вниз">↓</button>
+
+<script>
+const catalog = document.getElementById("catalog");
+const groupSelect = document.getElementById("group-select");
+const pharmacistMap = {};
+const allProducts = [];
+const productsByGroup = {};
+
+// 🔹 ID вашей таблицы
+const SHEET_ID = "1T59n7smJ32uIMTlvEXKlWQgMl1lXnJepJUhpD1HaEZM";
+
+// Загрузка провизоров
+fetch(`https://opensheet.elk.sh/${SHEET_ID}/Провизора`)
+  .then(res => res.json())
+  .then(data => {
+    const select = document.getElementById("pharmacist-select");
+    select.innerHTML = '<option disabled selected value="">— выберите —</option>';
+    data.forEach(row => {
+      const name = row["1 С или № нак"] || Object.values(row)[0];
+      if (name) {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+
+        pharmacistMap[name] = {
+          oblast: row["Город"] || "",
+          number: row["Tel"] || "",
+          object: row["Объект"] || ""
+        };
+      }
+    });
+
+    new Choices(select, {
+      searchEnabled: true,
+      shouldSort: false,
+      placeholder: true,
+      placeholderValue: "Начните ввод..."
+    });
+
+    select.addEventListener("change", () => {
+      const selected = select.value;
+      const info = pharmacistMap[selected];
+      const infoDiv = document.getElementById("pharmacist-info");
+      if (info) {
+        infoDiv.innerHTML = `<strong>Область:</strong> ${info.oblast}<br><strong>Телефон:</strong> ${info.number}<br><strong>Объект:</strong> ${info.object}`;
+        infoDiv.style.display = "block";
+      } else {
+        infoDiv.style.display = "none";
+      }
+    });
+  });
+
+// Загрузка продуктов
+fetch(`https://opensheet.elk.sh/${SHEET_ID}/Продукты`)
+  .then(res => res.json())
+  .then(data => {
+    data.forEach((row, index) => {
+      const name = row["Название"] || Object.values(row)[0];
+      const group = row["Группы"] || "Без группы";
+      const id = 1000 + index;
+      const product = { id, name, group };
+      allProducts.push(product);
+
+      if (!productsByGroup[group]) productsByGroup[group] = [];
+      productsByGroup[group].push(product);
+
+      const div = document.createElement("div");
+      div.className = "product";
+      div.id = `product-${id}`;
+      div.dataset.group = group;
+      div.innerHTML = `
+        <div class="product-name">${name}</div>
+        <div class="qty-controls">
+          <button onclick="adjustQty(${id}, -1)">−</button>
+          <input type="number" id="qty-${id}" value="0" min="0">
+          <button onclick="adjustQty(${id}, 1)">+</button>
+        </div>
+      `;
+      catalog.appendChild(div);
+    });
+
+    const groups = Object.keys(productsByGroup).sort();
+    groupSelect.innerHTML = '<option disabled selected value="">— выберите группу —</option>';
+    groups.forEach(g => {
+      const option = document.createElement("option");
+      option.value = g;
+      option.textContent = g;
+      groupSelect.appendChild(option);
+    });
+
+    groupSelect.addEventListener("change", () => {
+      const selectedGroup = groupSelect.value;
+      document.querySelectorAll(".product").forEach(el => {
+        el.style.display = (el.dataset.group === selectedGroup) ? "flex" : "none";
+      });
+    });
+  });
+
+function adjustQty(id, change) {
+  const input = document.getElementById(`qty-${id}`);
+  let val = parseInt(input.value) || 0;
+  input.value = Math.max(0, val + change);
+}
+
+function submitOrder() {
+  const pharmacist = document.getElementById("pharmacist-select").value;
+  const info = pharmacistMap[pharmacist];
+
+  let summary = `Провизор: ${pharmacist}`;
+  if (info) {
+    summary += `\nОбласть: ${info.oblast}\nТелефон: ${info.number}\nОбъект: ${info.object}`;
+  }
+
+  summary += `\n\nЗаявка:\n`;
+  let hasItems = false;
+  allProducts.forEach(p => {
+    const input = document.getElementById(`qty-${p.id}`);
+    const qty = parseInt(input.value) || 0;
+    if (qty > 0) {
+      summary += `${p.name} — ${qty}\n`;
+      hasItems = true;
+    }
+  });
+
+  document.getElementById("result").textContent = hasItems ? summary : "Вы ничего не выбрали.";
+  document.getElementById("copyButton").style.display = hasItems ? "block" : "none";
+  document.getElementById("closeButton").style.display = hasItems ? "block" : "none";
+}
+
+function copyToClipboard() {
+  const text = document.getElementById("result").textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById("copyButton");
+    btn.textContent = "✅ Скопировано!";
+    setTimeout(() => btn.textContent = "📋 Скопировать заказ", 2000);
+  });
+}
+
+function closeApp() {
+  if (typeof Telegram !== "undefined" && Telegram.WebApp) {
+    Telegram.WebApp.close();
+  } else {
+    alert("Функция закрытия доступна только в Telegram.");
+  }
+}
+</script>
+
+</body>
+</html>
