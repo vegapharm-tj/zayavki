@@ -260,9 +260,109 @@
     .scroll-btn:active {
       transform: scale(0.95);
     }
+    
+    /* Прелоадер */
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0190CC 0%, #0175a8 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    
+    #preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    
+    .preloader-logo {
+      width: 180px;
+      height: auto;
+      animation: logoFadeIn 1s ease, logoPulse 2s ease infinite;
+      filter: drop-shadow(0 4px 20px rgba(255, 255, 255, 0.3));
+    }
+    
+    .preloader-spinner {
+      margin-top: 30px;
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .preloader-text {
+      margin-top: 20px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      animation: textFadeIn 1.5s ease;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes logoFadeIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    @keyframes logoPulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+    
+    @keyframes textFadeIn {
+      0% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+    
+    /* Скрываем контент до загрузки */
+    body > *:not(#preloader) {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    
+    body.loaded > *:not(#preloader) {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
+
+<!-- Прелоадер -->
+<div id="preloader">
+  <img src="https://vegapharm.tj/wp-content/uploads//2024/11/logo-1.svg" alt="VegaPharm Logo" class="preloader-logo">
+  <div class="preloader-spinner"></div>
+  <div class="preloader-text">Загрузка...</div>
+</div>
 
 <h1>Каталог продукции</h1>
 
@@ -300,6 +400,27 @@ const productsByGroup = {};
 
 // 🔹 ID вашей таблицы
 const SHEET_ID = "1T59n7smJ32uIMTlvEXKlWQgMl1lXnJepJUhpD1HaEZM";
+
+// Функция для скрытия прелоадера
+function hidePreloader() {
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    preloader.classList.add('hidden');
+    document.body.classList.add('loaded');
+    setTimeout(() => {
+      preloader.remove();
+    }, 500);
+  }
+}
+
+// Счетчик загрузок
+let loadedCount = 0;
+function checkAllLoaded() {
+  loadedCount++;
+  if (loadedCount >= 2) {
+    hidePreloader();
+  }
+}
 
 // Загрузка провизоров
 fetch(`https://opensheet.elk.sh/${SHEET_ID}/Провизора`)
@@ -341,6 +462,8 @@ fetch(`https://opensheet.elk.sh/${SHEET_ID}/Провизора`)
         infoDiv.style.display = "none";
       }
     });
+    
+    checkAllLoaded();
   });
 
 // Загрузка продуктов
@@ -387,6 +510,8 @@ fetch(`https://opensheet.elk.sh/${SHEET_ID}/Продукты`)
         el.style.display = (el.dataset.group === selectedGroup) ? "flex" : "none";
       });
     });
+    
+    checkAllLoaded();
   });
 
 function adjustQty(id, change) {
